@@ -1,7 +1,11 @@
 package com.arolsen.listycity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
@@ -18,6 +22,27 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> cityAdapter;
     ArrayList<String> dataList;
 
+    Button addButton;
+    EditText addCityEditText;
+
+    private void onClickAdd(View _view) {
+        var name = addCityEditText.getText().toString();
+        if (name.isBlank()) {
+            // Don't add a new city with a blank name
+            return;
+        }
+
+        dataList.add(name);
+        cityAdapter.notifyDataSetChanged();
+
+        addCityEditText.setText("");
+    }
+
+    private void onClickCity(AdapterView<?> _adapterView, View _view, int index, long _id) {
+        dataList.remove(index);
+        cityAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         cityList = findViewById(R.id.city_list);
+        addButton = findViewById(R.id.add);
+        addCityEditText = findViewById(R.id.add_city_edit_text);
 
         String[] cities = {"Edmonton", "Paris", "London", "Ottawa"};
         dataList = new ArrayList<>();
@@ -38,5 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
         cityAdapter = new ArrayAdapter<>(this, R.layout.content, dataList);
         cityList.setAdapter(cityAdapter);
+
+        addButton.setOnClickListener(this::onClickAdd);
+        cityList.setOnItemClickListener(this::onClickCity);
     }
 }
